@@ -47,7 +47,7 @@ public class AssertTest {
 
 
         //Mensagem erro na comparação
-        Assert.assertEquals("Primeiro valor não é igual ao segundo", 1, 3);
+        Assert.assertEquals("Primeiro valor não é igual ao segundo", 1, 1);
 
 
 

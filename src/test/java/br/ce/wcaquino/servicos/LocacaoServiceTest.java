@@ -5,9 +5,7 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exception.FilmeSemEstoqueException;
 import br.ce.wcaquino.exception.LocadoraException;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
@@ -23,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 public class LocacaoServiceTest {
 
+    private LocacaoService service;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -30,10 +29,19 @@ public class LocacaoServiceTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    @Before
+    public void setup(){
+        this.service = new LocacaoService();
+    }
+
+    @After
+    public void tearDown(){
+    }
+
+
     @Test
     public void teste() throws Exception {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 2, 5.0);
 
@@ -50,7 +58,6 @@ public class LocacaoServiceTest {
     @Test(expected = FilmeSemEstoqueException.class)
     public void testLocacaoFilmeSemEstoque() throws Exception {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -59,11 +66,9 @@ public class LocacaoServiceTest {
 
     }
 
-
     @Test
     public void testLocacaoFilmeUsuarioVazioException() throws FilmeSemEstoqueException {
         //cenario
-        LocacaoService service = new LocacaoService();
         Filme filme = new Filme("Filme 1", 1, 5.0);
 
         //acao lança LocadoraException
@@ -78,7 +83,6 @@ public class LocacaoServiceTest {
     @Test
     public void testLocacaoFilmeFilmeVazioException() throws FilmeSemEstoqueException, LocadoraException {
         //cenario
-        LocacaoService service = new LocacaoService();
         Usuario usuario = new Usuario("Zezinho");
         exception.expect(LocadoraException.class);
         exception.expectMessage("Filme vazio!");

@@ -45,13 +45,8 @@ public class AssertTest {
         //Negado
         Assert.assertNotNull(u2);
 
-
         //Mensagem erro na comparação
         Assert.assertEquals("Primeiro valor não é igual ao segundo", 1, 1);
-
-
-
-
 
     }
 }

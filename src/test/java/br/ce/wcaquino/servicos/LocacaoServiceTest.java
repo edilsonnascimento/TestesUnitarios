@@ -5,15 +5,13 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exception.FilmeSemEstoqueException;
 import br.ce.wcaquino.exception.LocadoraException;
+import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
@@ -113,5 +111,15 @@ public class LocacaoServiceTest {
         Locacao resultado = service.alugarFilme(usuario, filmes);
 
         assertThat(resultado.getValor(), is(14.0));
+    }
+    @Test
+    public void naoDeveDevolverFilmeNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
+        Usuario usuario = new Usuario("José");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
+
+        Locacao retorno = service.alugarFilme(usuario, filmes);
+
+        boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
+        Assert.assertTrue(ehSegunda);
     }
 }

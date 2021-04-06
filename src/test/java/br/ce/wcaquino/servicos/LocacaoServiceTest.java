@@ -38,6 +38,24 @@ public class LocacaoServiceTest {
     public void tearDown(){
     }
 
+    @Test
+    public void teste() throws Exception {
+
+        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+
+        //cenario
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
+
+        //acao
+        Locacao locacao = service.alugarFilme(usuario, filmes);
+
+        //verificacao
+        error.checkThat(locacao.getValor(), is(equalTo(5.0)));
+        error.checkThat(locacao.getDataLocacao(), is(not(5)));
+        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+    }
 
     @Test(expected = FilmeSemEstoqueException.class)
     public void naoDeveAlugarFilmeSemEstoque() throws Exception {
@@ -51,7 +69,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void naoDeveAlugarFilmeSemUsurio() throws FilmeSemEstoqueException {
+    public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
         //cenario
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
 
@@ -76,10 +94,12 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar75PorCentoNoFilme3Locacao() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar75PorCentoNoFilmeTerceiroLocado() throws FilmeSemEstoqueException, LocadoraException {
 
         Usuario usuario = new Usuario("Usuario");
-        List<Filme> filmes = Arrays.asList(new Filme("Filme1", 2, 4.0), new Filme("Filme2", 2, 4.0),new Filme("Filme3", 2, 4.0));
+        List<Filme> filmes = Arrays.asList(new Filme("Filme1", 2, 4.0),
+                                           new Filme("Filme2", 2, 4.0),
+                                           new Filme("Filme3", 2, 4.0));
 
         Locacao resultado = service.alugarFilme(usuario, filmes);
 
@@ -87,7 +107,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar25PorCentoNoFilme5Locacao() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar25PorCentoNoFilmeQuintoLocado() throws FilmeSemEstoqueException, LocadoraException {
 
         Usuario usuario = new Usuario("Usuario");
         List<Filme> filmes = Arrays.asList(new Filme("Filme1", 2, 4.0), new Filme("Filme2", 2, 4.0),new Filme("Filme3", 2, 4.0), new Filme("Filme4", 2, 4.0), new Filme("Filme5", 2, 4.0));
@@ -98,7 +118,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void devePagar0PorCentoNoFilme6Locacao() throws FilmeSemEstoqueException, LocadoraException {
+    public void devePagar0PorCentoNoFilmeSextoLocado() throws FilmeSemEstoqueException, LocadoraException {
 
         Usuario usuario = new Usuario("Usuario");
         List<Filme> filmes = Arrays.asList(new Filme("Filme1", 2, 4.0),
@@ -113,7 +133,11 @@ public class LocacaoServiceTest {
         assertThat(resultado.getValor(), is(14.0));
     }
     @Test
-    public void naoDeveDevolverFilmeNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
+    @Ignore
+    public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+
+        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+
         Usuario usuario = new Usuario("José");
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
 

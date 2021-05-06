@@ -2,6 +2,7 @@ package br.ce.wcaquino.br.ce.wcaquino.servicos;
 
 
 
+import static br.ce.wcaquino.br.ce.wcaquino.matcher.MatchersProprios.caiNumaSegunda;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -110,7 +111,7 @@ public class LocacaoServiceTest {
 		Locacao retorno = service.alugarFilme(usuario, filmes);
 		
 		//verificacao
-		boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
-		Assert.assertTrue(ehSegunda);
+		assertThat(retorno.getDataRetorno(), caiNumaSegunda());
+
 	}
 }

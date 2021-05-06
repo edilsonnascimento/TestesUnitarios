@@ -1,21 +1,22 @@
 package br.ce.wcaquino.servicos;
 
-import br.ce.wcaquino.exception.NaoPodeDividirPorZeroException;
+import br.ce.wcaquino.exceptions.NaoPodeDividirPorZeroException;
 
 public class Calculadora {
-    
-    public int somar(int a, int b) {
-        return a + b;
-    }
 
-    public int subtracao(int a, int b) {
-        return a - b;
-    }
+	public int somar(int a, int b) {
+		return a + b;
+	}
 
-    public Double dividir(double a, double b) throws NaoPodeDividirPorZeroException {
+	public int subtrair(int a, int b) {
+		return a - b;
+	}
 
-        if( b== 0.0) throw  new NaoPodeDividirPorZeroException();
+	public int divide(int a, int b) throws NaoPodeDividirPorZeroException {
+		if(b == 0) {
+			throw new NaoPodeDividirPorZeroException();
+		}
+		return a / b;
+	}
 
-        return a / b;
-    }
 }

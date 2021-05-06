@@ -1,65 +1,64 @@
 package br.ce.wcaquino.servicos;
 
-import br.ce.wcaquino.entidades.Filme;
-import br.ce.wcaquino.entidades.Locacao;
-import br.ce.wcaquino.entidades.Usuario;
-import br.ce.wcaquino.exception.FilmeSemEstoqueException;
-import br.ce.wcaquino.exception.LocadoraException;
-import br.ce.wcaquino.utils.DataUtils;
+import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
+import br.ce.wcaquino.entidades.Filme;
+import br.ce.wcaquino.entidades.Locacao;
+import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
+import br.ce.wcaquino.exceptions.LocadoraException;
+import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoService {
-
+	
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
-
-		if(usuario == null){
-			throw new LocadoraException("Usuario vazio!");
+		if(usuario == null) {
+			throw new LocadoraException("Usuario vazio");
 		}
-		if(filmes == null || filmes.isEmpty()){
-			throw new LocadoraException("Lista de filmes não pode ser vazia!");
+		
+		if(filmes == null || filmes.isEmpty()) {
+			throw new LocadoraException("Filme vazio");
 		}
-
-		if(estaSemEstoque(filmes)){
-			throw new FilmeSemEstoqueException();
+		
+		for(Filme filme: filmes) {
+			if(filme.getEstoque() == 0) {
+				throw new FilmeSemEstoqueException();
+			}
 		}
-
+		
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
-		locacao.setValor(filmes);
-
+		Double valorTotal = 0d;
+		for(int i = 0; i < filmes.size(); i++) {
+			Filme filme = filmes.get(i);
+			Double valorFilme = filme.getPrecoLocacao();
+			switch (i) {
+				case 2: valorFilme = valorFilme * 0.75; break;
+				case 3: valorFilme = valorFilme * 0.5; break;
+				case 4: valorFilme = valorFilme * 0.25; break;
+				case 5: valorFilme = 0d; break;
+			}
+			valorTotal += valorFilme;
+		}
+		locacao.setValor(valorTotal);
+		
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
 		dataEntrega = adicionarDias(dataEntrega, 1);
-		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)){
+		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
 			dataEntrega = adicionarDias(dataEntrega, 1);
 		}
 		locacao.setDataRetorno(dataEntrega);
-
-		//Salvando a locacao...
+		
+		//Salvando a locacao...	
 		//TODO adicionar método para salvar
-
+		
 		return locacao;
 	}
-
-	public boolean estaSemEstoque(List<Filme> filmes){
-		long quantidadeFilmesSemEstoque = 0;
-
-		quantidadeFilmesSemEstoque = filmes.parallelStream().filter(LocacaoService::semEstoque).count();
-
-		return quantidadeFilmesSemEstoque > 0;
-	}
-
-	private static boolean semEstoque(Filme filme) {
-		return filme.getEstoque() < 1;
-	}
-
-
-
 }
